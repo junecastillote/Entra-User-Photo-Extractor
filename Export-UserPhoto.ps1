@@ -1,3 +1,43 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0
+
+.GUID 5a693a94-5617-4c38-a556-cabedd7b6892
+
+.AUTHOR June Castillote
+
+.COMPANYNAME
+
+.COPYRIGHT
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI https://github.com/junecastillote/Entra-User-Photo-Extractor
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#>
+
+<#
+
+.DESCRIPTION
+ PowerShell script to export Entra user photo to file
+
+#>
 [CmdletBinding()]
 param (
     [Parameter(Mandatory)]
@@ -101,4 +141,7 @@ $timeSpan = New-TimeSpan -Start $startTime -End $endTime
 "Photo dump       : $($photoLocation)" | Out-Default
 "Total time       : $($timeSpan.ToString("dd\.hh\:mm\:ss"))" | Out-Default
 "========================================" | Out-Default
+
+
+
 
