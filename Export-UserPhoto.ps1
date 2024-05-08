@@ -9,14 +9,18 @@ param (
     $UserId
 )
 
+if ($PSVersionTable.PSEdition -eq 'Core') {
+    $PSStyle.Progress.View = 'Classic'
+}
+
 $startTime = Get-Date
 
-if (!(Get-Module Microsoft.Graph.Authentication -ErrorAction Stop)) {
+if (!($null = Get-Module Microsoft.Graph.Authentication -ErrorAction Stop)) {
     "Connect to Microsoft Graph First using the Connect-MgGraph cmdlet." | Out-Default
     return $null
 }
 
-if (!(Get-MgContext)) {
+if (!($null = Get-MgContext)) {
     "Connect to Microsoft Graph First using the Connect-MgGraph cmdlet." | Out-Default
     return $null
 }
@@ -47,8 +51,6 @@ if ($PSVersionTable.PSEdition -eq 'Core') {
     $PSStyle.Progress.View = 'Classic'
 }
 
-
-
 $properties = "UserPrincipalName", "DisplayName", "AccountEnabled"
 if (!$UserId) {
     $users = Get-MgUser -Filter "userType eq 'Member'" -Property $properties -All | Select-Object $properties | Sort-Object UserPrincipalName
@@ -66,6 +68,8 @@ $users | Add-Member -MemberType NoteProperty -Name PhotoFilename -Value ''
 $users | Add-Member -MemberType NoteProperty -Name Notes -Value ''
 
 for ($i = 0; $i -lt $($users.Count); $i++) {
+    $percentComplete = (($i + 1) * 100) / $($users.Count)
+    Write-Progress -Activity "User: $($users[$i].DisplayName)" -Status "Progress: $($i+1) of $($users.Count) ($([math]::round($percentComplete,2))%)" -PercentComplete $percentComplete -ErrorAction SilentlyContinue
     try {
         $photoFileName = "$($users[$i].UserPrincipalName)_photo.jpg"
         Get-MgUserPhotoContent -UserId $users[$i].UserPrincipalName -OutFile "$($photoLocation)\$($photoFileName)" -ErrorAction Stop -WarningAction SilentlyContinue
@@ -84,6 +88,8 @@ for ($i = 0; $i -lt $($users.Count); $i++) {
     $users[$i] | Export-Csv -Append -Force -Path $resultFile
 }
 
+Write-Progress -Activity 'Done' -Completed -PercentComplete 100
+
 $endTime = Get-Date
 
 $timeSpan = New-TimeSpan -Start $startTime -End $endTime
@@ -95,3 +101,4 @@ $timeSpan = New-TimeSpan -Start $startTime -End $endTime
 "Photo dump       : $($photoLocation)" | Out-Default
 "Total time       : $($timeSpan.ToString("dd\.hh\:mm\:ss"))" | Out-Default
 "========================================" | Out-Default
+
