@@ -1,0 +1,5 @@
+/photos/
+/sample_photos/
+Get-ImageFileFormat.ps1
+imageFileTypes.json
+demo.ps1
