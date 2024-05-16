@@ -3,3 +3,4 @@
 Get-ImageFileFormat.ps1
 imageFileTypes.json
 demo.ps1
+*.txt
